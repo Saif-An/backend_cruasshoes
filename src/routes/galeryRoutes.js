@@ -12,16 +12,12 @@ import { auth } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Konfigurasi Cloudinary (hanya jika env vars tersedia)
-if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
-} else {
-  console.warn("⚠️  Cloudinary env vars tidak ditemukan. Upload gambar akan gagal.");
-}
+// Konfigurasi Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Setup multer dengan Cloudinary
 const storage = new CloudinaryStorage({
