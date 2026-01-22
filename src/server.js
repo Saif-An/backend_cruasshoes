@@ -24,4 +24,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/layanan", layananRoutes);
 app.use("/api/galery", galeryRoutes);
 app.use("/api/orders", orderRoutes);
-app.listen(5000, () => console.log("Server Running on Port 5000"));
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server Running on Port ${port}`));
+
+// Export for Vercel serverless
+export default app;

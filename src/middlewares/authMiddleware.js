@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const auth = (req, res, next) => {
   const header = req.headers.authorization;
-  if (!header) res.status(401).json({ mas: "Token diperlukan" });
+  if (!header) return res.status(401).json({ msg: "Token diperlukan" });
 
   const token = header.split(" ")[1];
   try {
