@@ -30,7 +30,7 @@ export const createGallery = async (req, res) => {
     }
 
     const { title } = req.body;
-    const image = req.file ? req.file.filename : null;
+    const image = req.file ? req.file.path : null;
 
     // Validasi
     if (!title || !image) {
