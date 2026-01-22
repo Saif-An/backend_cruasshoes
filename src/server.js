@@ -1,0 +1,27 @@
+import express from "express";
+import cors from "cors";
+import db from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import layananRoutes from "./routes/layananRoutes.js";
+import galeryRoutes from "./routes/galeryRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+
+const app = express();
+
+// Test database connection (non-blocking)
+db.getConnection()
+  .then(() => console.log("✅ MySQL Connected"))
+  .catch((err) => {
+    console.log("⚠️  MySQL Connection Failed:", err.message);
+    console.log(
+      "ℹ️  Server will continue running without database functionality",
+    );
+  });
+
+app.use(cors());
+app.use(express.json());
+app.use("/api/auth", authRoutes);
+app.use("/api/layanan", layananRoutes);
+app.use("/api/galery", galeryRoutes);
+app.use("/api/orders", orderRoutes);
+app.listen(5000, () => console.log("Server Running on Port 5000"));
