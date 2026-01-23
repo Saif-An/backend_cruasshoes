@@ -18,12 +18,12 @@ export const addGallery = async (title, image) => {
   try {
     const [result] = await db.query(
       "INSERT INTO gallery (title, image) VALUES (?, ?)",
-      [title.trim(), image],
+      [title, image],
     );
 
     return {
       id: result.insertId,
-      title: title.trim(),
+      title: title,
       image,
     };
   } catch (error) {

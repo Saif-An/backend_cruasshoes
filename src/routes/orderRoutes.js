@@ -6,24 +6,24 @@ import {
   updateOrder,
   removeOrder,
 } from "../controllers/orderController.js";
-import { auth } from "../middlewares/authMiddleware.js";
+import { auth, adminAuth } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // ==================== ROUTES ====================
 // GET: Semua orders (admin only)
-router.get("/admin", auth, getOrders);
+router.get("/admin", auth, adminAuth, getOrders);
 
 // GET: Order by ID (admin only)
-router.get("/admin:id", auth, getOrder);
+router.get("/admin/:id", auth, adminAuth, getOrder);
 
 // POST: Buat order baru (public)
 router.post("/", createNewOrder);
 
 // PUT: Update order status (admin only)
-router.put("/admin/:id", auth, updateOrder);
+router.put("/admin/:id", adminAuth, updateOrder);
 
 // DELETE: Hapus order (admin only)
-router.delete("/admin/:id", auth, removeOrder);
+router.delete("/admin/:id", adminAuth, removeOrder);
 
 export default router;

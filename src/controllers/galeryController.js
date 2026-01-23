@@ -21,13 +21,6 @@ export const getGallery = async (req, res) => {
 // Tambah gallery baru (admin only)
 export const createGallery = async (req, res) => {
   try {
-    // Cek apakah admin
-    if (req.user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Akses ditolak",
-      });
-    }
 
     const { title } = req.body;
     const image = req.file ? req.file.path : null;
@@ -59,13 +52,6 @@ export const createGallery = async (req, res) => {
 // Hapus gallery (admin only)
 export const removeGallery = async (req, res) => {
   try {
-    // Cek apakah admin
-    if (req.user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Akses ditolak",
-      });
-    }
 
     const { id } = req.params;
 

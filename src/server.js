@@ -7,6 +7,7 @@ import galeryRoutes from "./routes/galeryRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
+const port = process.env.DB_PORT;
 
 // Test database connection (non-blocking)
 db.getConnection()
@@ -25,7 +26,6 @@ app.use("/api/layanan", layananRoutes);
 app.use("/api/galery", galeryRoutes);
 app.use("/api/orders", orderRoutes);
 
-const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server Running on Port ${port}`));
 
 // Export for Vercel serverless

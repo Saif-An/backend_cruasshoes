@@ -6,7 +6,7 @@ import {
   createGallery,
   removeGallery,
 } from "../controllers/galeryController.js";
-import { auth } from "../middlewares/authMiddleware.js";
+import { auth, adminAuth } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -25,9 +25,9 @@ const upload = multer({ storage: storage });
 router.get("/", getGallery);
 
 // POST: Tambah gallery baru (admin only)
-router.post("/", auth, upload.single("image"), createGallery);
+router.post("/", auth, adminAuth, upload.single("image"), createGallery);
 
 // DELETE: Hapus gallery (admin only)
-router.delete("/:id", auth, removeGallery);
+router.delete("/:id", auth, adminAuth, removeGallery);
 
 export default router;

@@ -12,3 +12,11 @@ export const auth = (req, res, next) => {
     res.status(401).json({ msg: "Token tidak valid" });
   }
 };
+
+// Middleware untuk cek role admin
+export const adminAuth = (req, res, next) => {
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({ msg: "Akses ditolak, hanya admin yang diizinkan" });
+  }
+  next();
+};
