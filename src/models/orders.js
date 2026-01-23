@@ -133,7 +133,7 @@ export const updateOrderStatus = async (id, status) => {
   try {
     await db.execute(
       `
-      UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?
+      UPDATE orders SET status = ?  WHERE id = ?
       `,
       [status, id],
     );

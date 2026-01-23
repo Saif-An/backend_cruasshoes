@@ -21,9 +21,9 @@ router.get("/admin/:id", auth, adminAuth, getOrder);
 router.post("/", createNewOrder);
 
 // PUT: Update order status (admin only)
-router.put("/admin/:id", adminAuth, updateOrder);
+router.put("/admin/:id", auth, adminAuth, updateOrder);
 
 // DELETE: Hapus order (admin only)
-router.delete("/admin/:id", adminAuth, removeOrder);
+router.delete("/admin/:id", auth, adminAuth, removeOrder);
 
 export default router;

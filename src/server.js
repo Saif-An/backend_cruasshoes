@@ -26,7 +26,7 @@ app.use("/uploads", express.static("uploads/gallery"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/layanan", layananRoutes);
-app.use("/api/galery", galeryRoutes);
+app.use("/api/galeri", galeryRoutes);
 app.use("/api/orders", orderRoutes);
 app.post("/api/upload", upload.single("image"), (req, res) => {
   res.json({

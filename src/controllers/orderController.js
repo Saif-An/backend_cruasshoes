@@ -52,11 +52,26 @@ export const getOrder = async (req, res) => {
 // Create new order
 export const createNewOrder = async (req, res) => {
   try {
-    const { layanan_id, nama, email, telepon, alamat, tanggal, catatan } =
-      req.body;
+    const {
+      customer_id,
+      service_id,
+      total_price,
+      quantity,
+      notes,
+      alamat,
+      status,
+    } = req.body;
 
     // Validasi input
-    if (!layanan_id || !nama || !email || !telepon || !alamat || !tanggal) {
+    if (
+      !customer_id ||
+      !service_id ||
+      !total_price ||
+      !quantity ||
+      !notes ||
+      !alamat ||
+      !status
+    ) {
       return res.status(400).json({
         success: false,
         message: "Semua field wajib diisi",
@@ -64,13 +79,13 @@ export const createNewOrder = async (req, res) => {
     }
 
     const newOrder = await createOrder({
-      layanan_id,
-      nama,
-      email,
-      telepon,
+      customer_id,
+      service_id,
+      total_price,
+      quantity,
       alamat,
-      tanggal,
-      catatan: catatan || "",
+      notes,
+      status,
     });
 
     res.status(201).json({
