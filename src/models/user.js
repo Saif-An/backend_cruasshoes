@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 // ==================== CREATE ====================
 // Register user baru
-export const createUser = async (
+export const createNewUser = async (
   nama,
   email,
   hashedPassword,
@@ -11,14 +11,13 @@ export const createUser = async (
 ) => {
   try {
     const [result] = await db.query(
-      "INSERT INTO users (nama, email, password, phone, role) VALUES (?, ?, ?, ?, ?)",
-      [nama, email, hashedPassword, phone, role],
+      "INSERT INTO users (nama, email, password, role) VALUES (?, ?, ?, ?)",
+      [nama, email, hashedPassword, role],
     );
     return {
       id: result.insertId,
       name: nama,
       email: email,
-      phone: phone,
       role,
     };
   } catch (error) {
@@ -45,7 +44,7 @@ export const findByEmail = async (email) => {
 export const findById = async (id) => {
   try {
     const [rows] = await db.query(
-      "SELECT id, nama, email, phone, role, created_at FROM users WHERE id = ?",
+      "SELECT id, nama, email, role, created_at FROM users WHERE id = ?",
       [id],
     );
     return rows[0];
@@ -59,7 +58,7 @@ export const findById = async (id) => {
 export const getAllUsers = async () => {
   try {
     const [users] = await db.query(
-      "SELECT id, nama, email, phone, role, created_at FROM users ORDER BY created_at DESC",
+      "SELECT id, nama, email, role, created_at FROM users ORDER BY created_at DESC",
     );
     return users;
   } catch (error) {
@@ -82,12 +81,12 @@ export const emailExists = async (email) => {
 };
 
 // ==================== UPDATE ====================
-// Update data user (name, email, phone)
-export const updateUser = async (id, nama, email, phone) => {
+// Update data user (name, email)
+export const updateUser = async (id, nama, email) => {
   try {
     const [result] = await db.query(
-      "UPDATE users SET nama = ?, email = ?, phone = ? WHERE id = ?",
-      [nama, email, phone, id],
+      "UPDATE users SET nama = ?, email = ?, WHERE id = ?",
+      [nama, email, id],
     );
     return result.affectedRows > 0; // true jika berhasil
   } catch (error) {

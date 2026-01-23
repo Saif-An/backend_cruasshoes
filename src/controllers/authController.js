@@ -4,13 +4,12 @@ import * as UserModel from "../models/user.js";
 
 export const register = async (req, res) => {
   try {
-    const { nama, email, password, phone } = req.body;
+    const { nama, email, password } = req.body;
 
     // Validasi input
     if (!nama || !email || !password) {
-      return res
-        .status(400)
-        .json({ msg: "Nama, email, dan password wajib diisi" });
+      return res.status(400);
+      (1).json({ msg: "Nama, email, dan password wajib diisi" });
     }
 
     // Cek apakah email sudah terdaftar
@@ -21,7 +20,7 @@ export const register = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     // buat user baru
-    const newUser = await UserModel.createUser(nama, email, hashed, phone);
+    const newUser = await UserModel.createNewUser(nama, email, hashed);
 
     // generat token
     const token = jwt.sign(
@@ -76,3 +75,4 @@ export const login = async (req, res) => {
     res.status(500).json({ msg: "Terjadi kesalahan server" });
   }
 };
+1;
