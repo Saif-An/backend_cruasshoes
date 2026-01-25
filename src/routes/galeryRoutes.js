@@ -6,7 +6,9 @@ import {
   toggleStatus,
   removeGallery,
 } from "../controllers/galeryController.js";
-import upload from "../middlewares/upload.js"; // Pastikan path middleware multer benar
+
+// GANTI INI: Gunakan middleware Cloudinary, bukan multer lokal
+import { uploadCloudinary } from "../config/cloudinary.js";
 
 const router = express.Router();
 
@@ -15,11 +17,15 @@ router.get("/", getGallery);
 
 // Route untuk Admin
 router.get("/admin", getGalleryForAdmin);
-// POST: Upload gambar galeri baru
-router.post("/", upload.single("image"), createGallery);
+
+// POST: Upload gambar menggunakan Cloudinary
+// Nama field "image" harus sama dengan yang dikirim dari Frontend
+router.post("/", uploadCloudinary.single("image"), createGallery);
+
 // PUT: Toggle status aktif/non-aktif galeri
 router.put("/status/:id", toggleStatus);
-// DELETE: Hapus galeri berdasarkan ID
+
+// DELETE: Hapus galeri
 router.delete("/:id", removeGallery);
 
 export default router;

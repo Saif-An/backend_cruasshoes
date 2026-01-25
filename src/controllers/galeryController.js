@@ -16,7 +16,7 @@ export const getGallery = async (req, res) => {
   }
 };
 
-// Ambil semua foto untuk Admin (Termasuk yang disembunyikan)
+// Ambil semua foto untuk Admin
 export const getGalleryForAdmin = async (req, res) => {
   try {
     const data = await getAllGalleryAdmin();
@@ -26,22 +26,37 @@ export const getGalleryForAdmin = async (req, res) => {
   }
 };
 
-// Tambah foto baru
+// Tambah foto baru (Disesuaikan untuk Cloudinary)
 export const createGallery = async (req, res) => {
   try {
     const { title } = req.body;
+
+    /** * Saat menggunakan multer-storage-cloudinary:
+     * req.file.path akan otomatis berisi URL lengkap dari Cloudinary
+     * (Contoh: https://res.cloudinary.com/...)
+     */
     const imagePath = req.file ? req.file.path : null;
 
     if (!title || !imagePath) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Judul dan gambar wajib diisi" });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Judul dan gambar wajib diisi. Pastikan file terkirim dengan field name 'image'",
+      });
     }
 
     const newEntry = await addGallery(title, imagePath);
-    res.status(201).json({ success: true, data: newEntry });
+
+    res.status(201).json({
+      success: true,
+      message: "Foto berhasil diunggah ke Cloudinary dan disimpan ke database!",
+      data: newEntry,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Create Gallery Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Gagal memproses unggahan" });
   }
 };
 
@@ -49,11 +64,11 @@ export const createGallery = async (req, res) => {
 export const toggleStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { is_active } = req.body; // Kirim 1 atau 0 dari frontend
+    const { is_active } = req.body;
 
     const updated = await updateStatusGallery(id, is_active);
     if (updated) {
-      res.json({ success: true, message: "Status galeri berhasil diperbarui" });
+      res.json({ success: true, message: "Status galeri diperbarui" });
     } else {
       res.status(404).json({ success: false, message: "Data tidak ditemukan" });
     }
@@ -68,7 +83,10 @@ export const removeGallery = async (req, res) => {
     const { id } = req.params;
     const deleted = await deleteGallery(id);
     if (deleted) {
-      res.json({ success: true, message: "Foto berhasil dihapus" });
+      res.json({
+        success: true,
+        message: "Foto berhasil dihapus dari database",
+      });
     } else {
       res.status(404).json({ success: false, message: "Foto tidak ditemukan" });
     }
