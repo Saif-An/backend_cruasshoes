@@ -11,7 +11,9 @@ export const getAllLayanan = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getAllLayanan:", error);
-    res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server" });
   }
 };
 
@@ -21,7 +23,9 @@ export const getLayananById = async (req, res) => {
     const { id } = req.params;
     const layanan = await layananModel.findById(id);
     if (!layanan) {
-      return res.status(404).json({ success: false, message: "Layanan tidak ditemukan" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Layanan tidak ditemukan" });
     }
     res.status(200).json({
       success: true,
@@ -30,7 +34,9 @@ export const getLayananById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getLayananById:", error);
-    res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server" });
   }
 };
 
@@ -41,10 +47,17 @@ export const createLayanan = async (req, res) => {
 
     // Validasi input
     if (!id || !nama || !harga) {
-      return res.status(400).json({ success: false, message: "ID, nama, dan harga wajib diisi" });
+      return res
+        .status(400)
+        .json({ success: false, message: "ID, nama, dan harga wajib diisi" });
     }
 
-    const newLayanan = await layananModel.createLayanan(id, nama, deskripsi, harga);
+    const newLayanan = await layananModel.createLayanan(
+      id,
+      nama,
+      deskripsi,
+      harga,
+    );
     res.status(201).json({
       success: true,
       message: "Layanan berhasil ditambahkan",
@@ -55,7 +68,9 @@ export const createLayanan = async (req, res) => {
     if (error.message === "ID sudah digunakan") {
       return res.status(400).json({ success: false, message: error.message });
     }
-    res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server" });
   }
 };
 
@@ -67,12 +82,21 @@ export const updateLayanan = async (req, res) => {
 
     // Validasi input
     if (!nama || !harga) {
-      return res.status(400).json({ success: false, message: "Nama dan harga wajib diisi" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Nama dan harga wajib diisi" });
     }
 
-    const updated = await layananModel.updateLayanan(id, nama, deskripsi, harga);
+    const updated = await layananModel.updateLayanan(
+      id,
+      nama,
+      deskripsi,
+      harga,
+    );
     if (!updated) {
-      return res.status(404).json({ success: false, message: "Layanan tidak ditemukan" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Layanan tidak ditemukan" });
     }
 
     res.status(200).json({
@@ -81,7 +105,9 @@ export const updateLayanan = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in updateLayanan:", error);
-    res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server" });
   }
 };
 
@@ -92,7 +118,9 @@ export const deleteLayanan = async (req, res) => {
 
     const deleted = await layananModel.deleteLayanan(id);
     if (!deleted) {
-      return res.status(404).json({ success: false, message: "Layanan tidak ditemukan" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Layanan tidak ditemukan" });
     }
 
     res.status(200).json({
@@ -101,6 +129,8 @@ export const deleteLayanan = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in deleteLayanan:", error);
-    res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
+    res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server" });
   }
 };

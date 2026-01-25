@@ -1,166 +1,115 @@
-import {
-  getAllOrders,
-  getOrderById,
-  createOrder,
-  updateOrderStatus,
-  deleteOrder,
-} from "../models/orders.js";
+import * as OrderModel from "../models/orders.js";
 
-// Get all orders
+// 1. GET: Semua order (Admin Only)
 export const getOrders = async (req, res) => {
   try {
-    const orders = await getAllOrders();
-    res.json({
-      success: true,
-      data: orders,
-    });
+    const orders = await OrderModel.getAllOrders();
+    res.json({ success: true, data: orders });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal mengambil data orders",
-    });
+    res.status(500).json({ success: false, message: "Gagal mengambil data" });
   }
 };
 
-// Get order by ID
+// 2. GET: Detail satu order berdasarkan ID
 export const getOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await getOrderById(id);
+    const order = await OrderModel.getOrderById(id);
 
     if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order tidak ditemukan",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order tidak ditemukan" });
     }
 
-    res.json({
-      success: true,
-      data: order,
-    });
+    res.json({ success: true, data: order });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal mengambil data order",
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Gagal mengambil detail order" });
   }
 };
 
-// Create new order
+// 3. POST: Buat order baru (Customer)
 export const createNewOrder = async (req, res) => {
   try {
-    const {
-      customer_id,
-      service_id,
-      total_price,
-      quantity,
-      notes,
-      alamat,
-      status,
-    } = req.body;
+    const { service_id, total_price, quantity, notes, alamat, phone } =
+      req.body;
+    const customer_id = req.user?.id;
 
-    // Validasi input
-    if (
-      !customer_id ||
-      !service_id ||
-      !total_price ||
-      !quantity ||
-      !notes ||
-      !alamat ||
-      !status
-    ) {
+    if (!customer_id)
+      return res.status(401).json({ success: false, message: "Silakan login" });
+
+    if (!service_id || !alamat || !phone) {
       return res.status(400).json({
         success: false,
-        message: "Semua field wajib diisi",
+        message: "Layanan, Alamat, dan No HP wajib diisi!",
       });
     }
 
-    const newOrder = await createOrder({
+    const newOrder = await OrderModel.createOrder({
       customer_id,
       service_id,
-      total_price,
-      quantity,
-      alamat,
       notes,
-      status,
+      alamat,
+      phone,
+      quantity: Number(quantity) || 1,
+      total_price: Number(total_price),
     });
 
-    res.status(201).json({
-      success: true,
-      message: "Order berhasil dibuat",
-      data: newOrder,
-    });
+    res
+      .status(201)
+      .json({ success: true, message: "Order Berhasil!", data: newOrder });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal membuat order",
-    });
+    console.error("Create Order Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Gagal memproses pesanan" });
   }
 };
 
-// Update order status
+// 4. PUT: Update status order (Admin)
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
     if (!status) {
-      return res.status(400).json({
-        success: false,
-        message: "Status harus diisi",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Status harus diisi" });
     }
 
-    const validStatuses = [
-      "pending",
-      "confirmed",
-      "in_progress",
-      "completed",
-      "cancelled",
-    ];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Status tidak valid",
-      });
-    }
-
-    await updateOrderStatus(id, status);
-
+    await OrderModel.updateOrderStatus(id, status);
     res.json({
       success: true,
-      message: "Status order berhasil diupdate",
+      message: "Status diperbarui",
       data: { id, status },
     });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal update status order",
-    });
+    res.status(500).json({ success: false, message: "Gagal update status" });
   }
 };
 
-// Delete order
+// 5. DELETE: Hapus order (Admin)
 export const removeOrder = async (req, res) => {
   try {
     const { id } = req.params;
-
-    await deleteOrder(id);
-
-    res.json({
-      success: true,
-      message: "Order berhasil dihapus",
-    });
+    await OrderModel.deleteOrder(id);
+    res.json({ success: true, message: "Order dihapus" });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal menghapus order",
-    });
+    res.status(500).json({ success: false, message: "Gagal menghapus order" });
+  }
+};
+
+// 6. GET: Riwayat order user yang login (Customer)
+export const getMyOrders = async (req, res) => {
+  try {
+    const orders = await OrderModel.getOrdersByCustomerId(req.user.id);
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Gagal mengambil riwayat" });
   }
 };

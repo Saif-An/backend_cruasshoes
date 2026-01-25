@@ -5,7 +5,8 @@ import authRoutes from "./routes/authRoutes.js";
 import layananRoutes from "./routes/layananRoutes.js";
 import galeryRoutes from "./routes/galeryRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import upload from "./middlewares/multer.js";
+import testimonialRoutes from "./routes/testimonialRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 const port = process.env.DB_PORT;
@@ -22,17 +23,19 @@ db.getConnection()
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads/gallery"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/layanan", layananRoutes);
 app.use("/api/galeri", galeryRoutes);
 app.use("/api/orders", orderRoutes);
-app.post("/api/upload", upload.single("image"), (req, res) => {
-  res.json({
-    message: "File uploaded successfully",
-  });
-});
+// PENTING: Agar browser bisa mengakses file di uploads/galeri/foto.jpg
+app.use("/uploads", express.static("uploads"));
+
+// Gunakan routes
+app.use("/api/galeri", galeryRoutes);
+
+app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.listen(port, () => console.log(`Server Running on Port ${port}`));
 

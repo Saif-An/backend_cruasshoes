@@ -1,33 +1,20 @@
 import db from "../config/db.js";
 
-// ==================== CREATE ====================
-// Tambah layanan baru
-export const createLayanan = async (id, nama, deskripsi, harga) => {
+// 1. Cari layanan berdasarkan ID
+export const findById = async (id) => {
   try {
-    // Cek apakah ID sudah digunakan
-    const existing = await findById(id);
-    if (existing) {
-      throw new Error("ID sudah digunakan");
-    }
-
-    const [result] = await db.query(
-      "INSERT INTO layanan (id, nama, deskripsi, harga) VALUES (?, ?, ?, ?)",
-      [id, nama, deskripsi, harga],
+    const [rows] = await db.query(
+      "SELECT id, nama, deskripsi, harga FROM layanan WHERE id = ?",
+      [id],
     );
-    return {
-      id: id,
-      nama: nama,
-      deskripsi: deskripsi,
-      harga: harga,
-    };
+    return rows[0];
   } catch (error) {
-    console.error("Error in createLayanan:", error);
+    console.error("Error in findById:", error);
     throw error;
   }
 };
 
-// ==================== READ ====================
-// Get semua layanan
+// 2. Get semua layanan
 export const getAllLayanan = async () => {
   try {
     const [rows] = await db.query(
@@ -40,25 +27,32 @@ export const getAllLayanan = async () => {
   }
 };
 
-// Cari layanan berdasarkan ID
-export const findById = async (id) => {
+// 3. Tambah layanan baru
+export const createLayanan = async (id, nama, deskripsi, harga) => {
   try {
-    const [rows] = await db.query(
-      "SELECT id, nama, deskripsi, harga  FROM layanan WHERE id = ?",
-      [id],
+    // Validasi duplikat ID
+    const existing = await findById(id);
+    if (existing) {
+      throw new Error("ID sudah digunakan");
+    }
+
+    await db.query(
+      "INSERT INTO layanan (id, nama, deskripsi, harga) VALUES (?, ?, ?, ?)",
+      [id, nama, deskripsi, harga],
     );
-    return rows[0];
+
+    return { id, nama, deskripsi, harga };
   } catch (error) {
-    console.error("Error in findById:", error);
+    console.error("Error in createLayanan:", error);
     throw error;
   }
 };
 
-// Cari layanan berdasarkan nama (untuk cek duplikat)
+// 4. Cari layanan berdasarkan nama (untuk validasi tambahan jika perlu)
 export const findByName = async (nama) => {
   try {
     const [rows] = await db.query(
-      "SELECT id FROM layanan WHERE LOWER(nama) = LOWER(?)",
+      "SELECT id, nama FROM layanan WHERE LOWER(nama) = LOWER(?)",
       [nama],
     );
     return rows[0];
@@ -68,8 +62,7 @@ export const findByName = async (nama) => {
   }
 };
 
-// ==================== UPDATE ====================
-// Update data layanan
+// 5. Update data layanan
 export const updateLayanan = async (id, nama, deskripsi, harga) => {
   try {
     const [result] = await db.query(
@@ -83,8 +76,7 @@ export const updateLayanan = async (id, nama, deskripsi, harga) => {
   }
 };
 
-// ==================== DELETE ====================
-// Hapus layanan (
+// 6. Hapus layanan
 export const deleteLayanan = async (id) => {
   try {
     const [result] = await db.query("DELETE FROM layanan WHERE id = ?", [id]);

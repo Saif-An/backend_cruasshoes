@@ -14,15 +14,16 @@ const router = express.Router();
 router.get("/", getAllLayanan);
 
 // GET layanan by ID
-router.get("/admin/:id", auth, adminAuth, getLayananById);
+router.get("/:id", auth, adminAuth, getLayananById);
 
 // POST create new layanan
-router.post("/admin", auth, adminAuth, createLayanan);
-
+router.post("/", createLayanan);
+// auth, adminAuth,
 // PUT update layanan
-router.put("/admin/:id", auth, adminAuth, updateLayanan);
+router.put("/:id", updateLayanan);
+//  auth, adminAuth,
 
 // DELETE layanan
-router.delete("/admin/:id", auth, adminAuth, deleteLayanan);
-
+router.delete("/:id", deleteLayanan);
+//  auth, adminAuth,
 export default router;

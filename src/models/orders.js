@@ -1,156 +1,71 @@
 import db from "../config/db.js";
 
-// Get all orders
+// Ambil semua order (Admin)
 export const getAllOrders = async () => {
-  try {
-    const [rows] = await db.execute(`
-      SELECT 
-        o.id, 
-        o.customer_id, 
-        o.quantity, 
-        o.total_price, 
-        o.notes, 
-        o.alamat,
-        o.status, 
-        o.created_at,
-        l.nama AS layanan_nama, 
-        l.harga AS layanan_harga
-      FROM orders o
-      LEFT JOIN layanan l ON o.service_id = l.id
-      ORDER BY o.created_at DESC
-    `);
-    return rows;
-  } catch (error) {
-    console.error("Error dalam getAllOrders:", error.message);
-    throw error;
-  }
+  const [rows] = await db.execute(`
+    SELECT o.*, u.nama AS customer_name, l.nama AS service_name
+    FROM orders o
+    LEFT JOIN users u ON o.customer_id = u.id
+    LEFT JOIN layanan l ON o.service_id = l.id
+    ORDER BY o.created_at DESC
+  `);
+  return rows;
 };
 
-// Get order by ID
-export const getOrderById = async (id) => {
-  try {
-    const [rows] = await db.execute(
-      `
-      SELECT o.*, l.nama as layanan_nama, l.harga as layanan_harga
-      FROM orders o
-      LEFT JOIN layanan l ON o.service_id = l.id
-      WHERE o.id = ?
-    `,
-      [id],
-    );
-    return rows[0];
-  } catch (error) {
-    console.error("Error dalam getOrderById:", error.message);
-    throw error;
-  }
-};
-
-// Create new order
+// Buat order baru
 export const createOrder = async (orderData) => {
-  try {
-    const {
+  const {
+    customer_id,
+    service_id,
+    notes,
+    alamat,
+    phone,
+    quantity,
+    total_price,
+  } = orderData;
+  const [result] = await db.execute(
+    `INSERT INTO orders 
+      (customer_id, service_id, notes, alamat, phone, quantity, total_price, status, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())`,
+    [
       customer_id,
       service_id,
-      total_price,
-      quantity,
-      notes,
+      notes || "-",
       alamat,
-      status = "pending",
-    } = orderData;
-
-    const [result] = await db.execute(
-      `
-      INSERT INTO orders 
-        (customer_id, service_id, total_price, quantity, notes, alamat, status, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
-      `,
-      [customer_id, service_id, total_price, quantity, notes, alamat, status],
-    );
-
-    return {
-      id: result.insertId,
-      customer_id,
-      service_id,
-      total_price,
+      phone,
       quantity,
-      notes,
-      alamat,
-      status,
-      created_at: new Date(),
-    };
-  } catch (error) {
-    console.error("Error dalam createOrder:", error.message);
-    throw error;
-  }
+      total_price,
+    ],
+  );
+  return { id: result.insertId, ...orderData };
 };
 
-// Update order
-export const updateOrder = async (id, orderData) => {
-  try {
-    const {
-      customer_id,
-      service_id,
-      total_price,
-      quantity,
-      notes,
-      alamat,
-      status,
-    } = orderData;
-
-    await db.execute(
-      `
-      UPDATE orders 
-      SET customer_id = ?, 
-          service_id = ?, 
-          total_price = ?, 
-          quantity = ?, 
-          notes = ?, 
-          alamat = ?, 
-          status = ?
-      WHERE id = ?
-      `,
-      [
-        customer_id,
-        service_id,
-        total_price,
-        quantity,
-        notes,
-        alamat,
-        status,
-        id,
-      ],
-    );
-
-    return { id, ...orderData };
-  } catch (error) {
-    console.error("Error dalam updateOrder:", error.message);
-    throw error;
-  }
-};
-
-// Update order status
+// Update status saja (Admin)
 export const updateOrderStatus = async (id, status) => {
-  try {
-    await db.execute(
-      `
-      UPDATE orders SET status = ?  WHERE id = ?
-      `,
-      [status, id],
-    );
-    return { id, status };
-  } catch (error) {
-    console.error("Error dalam updateOrderStatus:", error.message);
-    throw error;
-  }
+  await db.execute("UPDATE orders SET status = ? WHERE id = ?", [status, id]);
+  return { id, status };
 };
 
-// Delete order
+// Ambil riwayat order milik user tertentu
+export const getOrdersByCustomerId = async (customerId) => {
+  const [rows] = await db.execute(
+    `SELECT o.*, l.nama AS layanan_nama 
+     FROM orders o
+     LEFT JOIN layanan l ON o.service_id = l.id
+     WHERE o.customer_id = ? ORDER BY o.created_at DESC`,
+    [customerId],
+  );
+  return rows;
+};
+
+// Hapus order
 export const deleteOrder = async (id) => {
-  try {
-    await db.execute("DELETE FROM orders WHERE id = ?", [id]);
-    return { id };
-  } catch (error) {
-    console.error("Error dalam deleteOrder:", error.message);
-    throw error;
-  }
+  await db.execute("DELETE FROM orders WHERE id = ?", [id]);
+  return { id };
+};
+
+// Detail order berdasarkan ID
+export const getOrderById = async (id) => {
+  const [rows] = await db.execute("SELECT * FROM orders WHERE id = ?", [id]);
+  return rows[0];
 };

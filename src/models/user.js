@@ -6,7 +6,6 @@ export const createNewUser = async (
   nama,
   email,
   hashedPassword,
-  phone,
   role = "customer",
 ) => {
   try {
@@ -33,7 +32,7 @@ export const findByEmail = async (email) => {
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
-    return rows[0]; // Return single user atau undefined
+    return rows[0];
   } catch (error) {
     console.error("Error in findByEmail:", error);
     throw error;
@@ -85,7 +84,7 @@ export const emailExists = async (email) => {
 export const updateUser = async (id, nama, email) => {
   try {
     const [result] = await db.query(
-      "UPDATE users SET nama = ?, email = ?, WHERE id = ?",
+      "UPDATE users SET nama = ?, email = ? WHERE id = ?",
       [nama, email, id],
     );
     return result.affectedRows > 0; // true jika berhasil
@@ -114,7 +113,7 @@ export const updatePassword = async (id, hashedPassword) => {
 export const deleteUser = async (id) => {
   try {
     const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
-    return result.affectedRows > 0; // true jika berhasil
+    return result.affectedRows > 0;
   } catch (error) {
     console.error("Error in deleteUser:", error);
     throw error;

@@ -5,25 +5,28 @@ import {
   createNewOrder,
   updateOrder,
   removeOrder,
+  getMyOrders,
 } from "../controllers/orderController.js";
 import { auth, adminAuth } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// ==================== ROUTES ====================
-// GET: Semua orders (admin only)
-router.get("/admin", auth, adminAuth, getOrders);
+// 1. GET: Orders milik user yang sedang login
+router.get("/my-orders", auth, getMyOrders);
 
-// GET: Order by ID (admin only)
-router.get("/admin/:id", auth, adminAuth, getOrder);
+// 2. GET: Semua orders (admin only)
+router.get("/", auth, adminAuth, getOrders);
 
-// POST: Buat order baru (public)
-router.post("/", createNewOrder);
+// 3. POST: Buat order baru (User login)
+router.post("/", auth, createNewOrder);
 
-// PUT: Update order status (admin only)
-router.put("/admin/:id", auth, adminAuth, updateOrder);
+// 4. GET: Order berdasarkan ID (admin only)
+router.get("/:id", auth, adminAuth, getOrder);
 
-// DELETE: Hapus order (admin only)
-router.delete("/admin/:id", auth, adminAuth, removeOrder);
+// 5. PUT: Update order status (admin only)
+router.put("/:id", auth, adminAuth, updateOrder);
+
+// 6. DELETE: Hapus order (admin only)
+router.delete("/:id", auth, adminAuth, removeOrder);
 
 export default router;

@@ -1,33 +1,25 @@
 import express from "express";
-import multer from "multer";
-import path from "path";
 import {
   getGallery,
+  getGalleryForAdmin,
   createGallery,
+  toggleStatus,
   removeGallery,
 } from "../controllers/galeryController.js";
-import { auth, adminAuth } from "../middlewares/authMiddleware.js";
+import upload from "../middlewares/upload.js"; // Pastikan path middleware multer benar
 
 const router = express.Router();
 
-// Setup upload gambar sederhana
-const storage = multer.diskStorage({
-  destination: "uploads/gallery/",
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage: storage });
-
-// ==================== ROUTES ====================
-// GET: Semua gallery (public)
+// Route untuk Website (Publik)
 router.get("/", getGallery);
 
-// POST: Tambah gallery baru (admin only)
-router.post("/", auth, adminAuth, upload.single("image"), createGallery);
-
-// DELETE: Hapus gallery (admin only)
-router.delete("/:id", auth, adminAuth, removeGallery);
+// Route untuk Admin
+router.get("/admin", getGalleryForAdmin);
+// POST: Upload gambar galeri baru
+router.post("/", upload.single("image"), createGallery);
+// PUT: Toggle status aktif/non-aktif galeri
+router.put("/status/:id", toggleStatus);
+// DELETE: Hapus galeri berdasarkan ID
+router.delete("/:id", removeGallery);
 
 export default router;

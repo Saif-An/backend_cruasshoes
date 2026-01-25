@@ -1,85 +1,78 @@
-import { getAllGallery, addGallery, deleteGallery } from "../models/galeri.js";
+import {
+  getAllGalleryAdmin,
+  getAllGallery,
+  addGallery,
+  updateStatusGallery,
+  deleteGallery,
+} from "../models/galeri.js";
 
-// Get semua gallery untuk website
+// Ambil semua foto untuk Website (Hanya yang is_active = 1)
 export const getGallery = async (req, res) => {
   try {
-    const gallery = await getAllGallery();
-
-    res.json({
-      success: true,
-      data: gallery,
-    });
+    const data = await getAllGallery();
+    res.json({ success: true, data });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal mengambil gallery",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Tambah gallery baru (admin only)
+// Ambil semua foto untuk Admin (Termasuk yang disembunyikan)
+export const getGalleryForAdmin = async (req, res) => {
+  try {
+    const data = await getAllGalleryAdmin();
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Tambah foto baru
 export const createGallery = async (req, res) => {
   try {
-
     const { title } = req.body;
-    const image = req.file ? req.file.path : null;
+    const imagePath = req.file ? req.file.path : null;
 
-    // Validasi
-    if (!title || !image) {
-      return res.status(400).json({
-        success: false,
-        message: "Judul dan gambar harus diisi",
-      });
+    if (!title || !imagePath) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Judul dan gambar wajib diisi" });
     }
 
-    const newGallery = await addGallery(title, image);
-
-    res.status(201).json({
-      success: true,
-      message: "Foto berhasil ditambahkan",
-      data: newGallery,
-    });
+    const newEntry = await addGallery(title, imagePath);
+    res.status(201).json({ success: true, data: newEntry });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal menambah foto",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Hapus gallery (admin only)
+// Update status (Tampilkan/Sembunyikan)
+export const toggleStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body; // Kirim 1 atau 0 dari frontend
+
+    const updated = await updateStatusGallery(id, is_active);
+    if (updated) {
+      res.json({ success: true, message: "Status galeri berhasil diperbarui" });
+    } else {
+      res.status(404).json({ success: false, message: "Data tidak ditemukan" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Hapus foto
 export const removeGallery = async (req, res) => {
   try {
-
     const { id } = req.params;
-
-    if (!id || isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "ID tidak valid",
-      });
-    }
-
     const deleted = await deleteGallery(id);
-
-    if (!deleted) {
-      return res.status(404).json({
-        success: false,
-        message: "Foto tidak ditemukan",
-      });
+    if (deleted) {
+      res.json({ success: true, message: "Foto berhasil dihapus" });
+    } else {
+      res.status(404).json({ success: false, message: "Foto tidak ditemukan" });
     }
-
-    res.json({
-      success: true,
-      message: "Foto berhasil dihapus",
-    });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Gagal menghapus foto",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
