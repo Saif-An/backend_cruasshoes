@@ -37,6 +37,14 @@ app.use("/api/galeri", galeryRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Tambahkan ini agar halaman utama tidak kosong/error
+app.get("/", (req, res) => {
+  res.json({
+    message: "Backend CRUAS SHOES API is running!",
+    status: "Online",
+  });
+});
+
 app.listen(port, () => console.log(`Server Running on Port ${port}`));
 
 // Export for Vercel serverless
