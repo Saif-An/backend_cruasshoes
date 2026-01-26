@@ -7,7 +7,6 @@ import {
   removeGallery,
 } from "../controllers/galeryController.js";
 
-// GANTI INI: Gunakan middleware Cloudinary, bukan multer lokal
 import { uploadCloudinary } from "../config/cloudinary.js";
 
 const router = express.Router();
@@ -19,7 +18,6 @@ router.get("/", getGallery);
 router.get("/admin", getGalleryForAdmin);
 
 // POST: Upload gambar menggunakan Cloudinary
-// Nama field "image" harus sama dengan yang dikirim dari Frontend
 router.post("/", uploadCloudinary.single("image"), createGallery);
 
 // PUT: Toggle status aktif/non-aktif galeri

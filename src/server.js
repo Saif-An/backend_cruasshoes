@@ -10,8 +10,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 
-// PERBAIKAN 1: Port untuk Vercel/Produksi
-// Vercel akan mengatur port secara otomatis, atau gunakan 5000 untuk lokal
 const port = process.env.PORT || 5000;
 
 // Test database connection (Aiven MySQL)
@@ -24,7 +22,7 @@ db.getConnection()
 app.use(cors());
 app.use(express.json());
 
-// PERBAIKAN 2: Rute Utama (Mencegah "Cannot GET /")
+//Rute Utama
 app.get("/", (req, res) => {
   res.json({
     message: "Backend CRUAS SHOES API is running!",

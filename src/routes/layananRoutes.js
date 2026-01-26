@@ -17,13 +17,13 @@ router.get("/", getAllLayanan);
 router.get("/:id", auth, adminAuth, getLayananById);
 
 // POST create new layanan
-router.post("/", createLayanan);
+router.post("/", auth, adminAuth, createLayanan);
 // auth, adminAuth,
 // PUT update layanan
-router.put("/:id", updateLayanan);
+router.put("/:id", auth, adminAuth, updateLayanan);
 //  auth, adminAuth,
 
 // DELETE layanan
-router.delete("/:id", deleteLayanan);
+router.delete("/:id", auth, adminAuth, deleteLayanan);
 //  auth, adminAuth,
 export default router;

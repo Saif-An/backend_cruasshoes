@@ -31,10 +31,6 @@ export const createGallery = async (req, res) => {
   try {
     const { title } = req.body;
 
-    /** * Saat menggunakan multer-storage-cloudinary:
-     * req.file.path akan otomatis berisi URL lengkap dari Cloudinary
-     * (Contoh: https://res.cloudinary.com/...)
-     */
     const imagePath = req.file ? req.file.path : null;
 
     if (!title || !imagePath) {

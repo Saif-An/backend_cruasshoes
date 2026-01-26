@@ -13,7 +13,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "cruas_shoes_gallery", // Folder di Cloudinary Anda
+    folder: "cruas_shoes_gallery", // Folder di Cloudinary
     allowed_formats: ["jpg", "png", "jpeg"],
     transformation: [{ width: 800, height: 800, crop: "limit" }], // Otomatis resize agar hemat storage
   },
